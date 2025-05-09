@@ -1,0 +1,697 @@
+/* style.css (COMPLETO - Base + Placar + Labels + Modal + Dicas + Novo Header/Footer) */
+
+/* Importação das Fontes */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@400;700&display=swap');
+
+/* Definição das Variáveis de Cor (Paleta Dracula-like) */
+:root {
+    --bg-dark-start: #1a1a2e;       /* Fundo gradiente início */
+    --bg-dark-end: #16213e;         /* Fundo gradiente fim */
+    --bg-secondary: rgba(40, 42, 54, 0.9); /* Fundo principal (semi-transparente) */
+    --bg-secondary-opaque: #282a36; /* Fundo principal (opaco) */
+    --border-color: #6272a4;       /* Cor de bordas e texto secundário (Azul acinzentado) */
+    --text-main: #f8f8f2;           /* Cor principal do texto (Branco suave) */
+    --text-secondary: #bd93f9;     /* Cor de texto secundário (Roxo) */
+    --accent-green: #50fa7b;         /* Verde para destaque/sucesso */
+    --accent-pink: #ff79c6;          /* Rosa para destaque/títulos */
+    --accent-yellow: #f1fa8c;        /* Amarelo para avisos/dicas */
+    --accent-purple: #bd93f9;        /* Roxo para botões/links */
+    --accent-cyan: #8be9fd;          /* Ciano para peças/highlights */
+    --error-red: #ff5555;           /* Vermelho para erros */
+
+    --font-primary: 'Roboto', sans-serif; /* Fonte principal para texto */
+    --font-title: 'Orbitron', sans-serif;   /* Fonte para títulos e elementos de destaque */
+}
+
+/* Estilos Globais e Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none; /* Evita seleção de texto indesejada */
+}
+
+html {
+    font-size: 16px; /* Tamanho de fonte base */
+    scroll-behavior: smooth; /* Rolagem suave para links internos (como os do footer) */
+}
+
+body {
+    font-family: var(--font-primary);
+    color: var(--text-main);
+    background: linear-gradient(135deg, var(--bg-dark-start), var(--bg-dark-end)); /* Fundo gradiente */
+    display: flex;
+    flex-direction: column; /* Organiza conteúdo verticalmente */
+    justify-content: flex-start; /* Alinha conteúdo ao topo */
+    align-items: center; /* Centraliza horizontalmente */
+    min-height: 100vh; /* Altura mínima total da tela */
+    padding: 1rem; /* Espaçamento nas laterais */
+    overflow-x: hidden; /* Evita barra de rolagem horizontal */
+}
+
+/* Contêiner Principal */
+.game-container {
+    background-color: var(--bg-secondary); /* Fundo semi-transparente */
+    padding: 1.5rem 2rem;
+    border-radius: 15px; /* Bordas arredondadas */
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); /* Sombra pronunciada */
+    max-width: 95%; /* Largura máxima relativa */
+    width: fit-content; /* Largura ajustada ao conteúdo */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Espaçamento entre elementos filhos */
+    /* margin-bottom foi removido para usar footer normal */
+    animation: fadeIn 0.5s ease-out forwards; /* Animação de entrada */
+    margin-top: 1rem; /* Adiciona espaço no topo */
+}
+
+/* Cabeçalho e Títulos */
+header {
+    margin-bottom: 0.5rem;
+}
+
+/* Título Principal */
+.game-title {
+    font-family: var(--font-title);
+    font-size: 2.5rem;
+    letter-spacing: 2px;
+    margin-bottom: 0.25rem;
+    line-height: 1.2;
+    /* text-shadow foi removido */
+}
+
+/* Estilo para a parte "GEEK" do título */
+.title-geek {
+    color: var(--accent-green); /* Verde */
+}
+
+/* Estilo para a parte "CODE" do título */
+.title-code {
+    color: var(--accent-pink); /* Rosa */
+}
+
+/* Subtítulo "Resta 1" */
+.subtitle {
+    font-family: var(--font-title);
+    font-size: 1.2rem;
+    color: var(--accent-green); /* Verde */
+    font-weight: 400;
+    margin-top: 0.2rem;
+}
+
+/* Wrapper para Tabuleiro e Placar */
+.game-area-wrapper {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start; /* Alinha os topos */
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap; /* Permite quebrar linha em telas menores */
+}
+
+/* Container do tabuleiro */
+.board-container {
+    flex-shrink: 0; /* Impede que encolha */
+    width: clamp(280px, 80vw, 450px); /* Tamanho flexível com limites */
+}
+
+/* Tabuleiro */
+.board {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(7, 1fr);
+    gap: 5px; /* Espaço entre as células */
+    aspect-ratio: 1 / 1; /* Mantém o tabuleiro quadrado */
+    background-color: rgba(0, 0, 0, 0.1); /* Fundo levemente escuro */
+    border: 2px solid var(--border-color);
+    padding: 5px;
+    border-radius: 8px;
+}
+
+/* Células do Tabuleiro */
+.cell {
+    aspect-ratio: 1 / 1; /* Mantém as células quadradas */
+    border-radius: 50%; /* Formato circular */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    position: relative; /* Necessário para o label absoluto */
+}
+
+/* Célula Inválida (Fora do tabuleiro padrão) */
+.cell.invalid {
+    background-color: transparent; /* Sem fundo */
+    border: none;
+    cursor: default; /* Cursor padrão */
+    pointer-events: none; /* Ignora cliques */
+}
+
+/* Célula Vazia */
+.cell.empty {
+    background-color: var(--bg-secondary-opaque); /* Fundo padrão */
+    border: 2px dashed var(--border-color); /* Borda tracejada */
+}
+.cell.empty:hover {
+    background-color: rgba(98, 114, 164, 0.4); /* Fundo levemente azulado no hover */
+}
+
+/* Peça (Peg) - Usando pseudo-elemento ::before */
+.cell.peg::before {
+    content: '';
+    display: block;
+    width: 75%; /* Tamanho da peça interna */
+    height: 75%;
+    background-color: var(--accent-cyan); /* Cor da peça (Ciano) */
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(139, 233, 253, 0.7), /* Brilho externo */
+                inset 0 2px 4px rgba(0, 0, 0, 0.3); /* Sombra interna (efeito 3D) */
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    z-index: 1; /* Garante que a peça fique abaixo do label de coordenada */
+    position: relative; /* Necessário para z-index funcionar corretamente com o label absoluto */
+}
+
+/* Hover na Peça */
+.cell.peg:hover::before {
+    background-color: var(--accent-pink); /* Muda para rosa no hover */
+    box-shadow: 0 0 12px var(--accent-pink);
+}
+
+/* Peça Selecionada */
+.cell.peg.selected::before {
+    background-color: var(--accent-green); /* Verde quando selecionada */
+    transform: scale(1.1); /* Aumenta ligeiramente */
+    box-shadow: 0 0 15px var(--accent-green); /* Brilho verde intenso */
+}
+
+/* Destaque para Movimento Válido (célula vazia de destino) */
+.cell.empty.highlight {
+    background-color: rgba(80, 250, 123, 0.3); /* Fundo verde transparente */
+    border: 2px solid var(--accent-green); /* Borda verde sólida */
+    box-shadow: 0 0 10px var(--accent-green); /* Brilho verde */
+}
+
+/* --- Estilos para Labels de Coordenadas --- */
+.coordinate-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centraliza o label na célula */
+    font-size: 0.65rem; /* Tamanho pequeno */
+    font-weight: bold;
+    font-family: var(--font-primary);
+    color: var(--border-color); /* Cor padrão (para células vazias) */
+    pointer-events: none; /* Não interfere com cliques */
+    user-select: none;
+    z-index: 2; /* Fica acima do pseudo-elemento ::before da peça */
+    opacity: 0.8; /* Levemente transparente */
+    transition: opacity 0.3s ease, color 0.3s ease;
+    text-shadow: 0 0 2px rgba(0,0,0,0.5); /* Sombra leve para legibilidade */
+}
+
+/* Cor do label em células com PEÇAS (contraste) */
+.cell.peg .coordinate-label {
+    color: var(--bg-secondary-opaque); /* Cor escura para contraste com peça ciano/verde/rosa */
+}
+
+/* Painel de Placar/Histórico da Partida Atual */
+.score-panel {
+    background-color: rgba(40, 42, 54, 0.7); /* Fundo semi-transparente */
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    width: 220px; /* Largura fixa */
+    max-height: 450px; /* Altura máxima (correspondente à altura max do board container) */
+    min-height: 150px; /* Altura mínima para evitar ficar muito pequeno */
+    overflow-y: auto; /* Adiciona barra de rolagem vertical se necessário */
+    flex-shrink: 0; /* Impede que encolha */
+    color: var(--text-secondary); /* Cor do texto base (Roxo) */
+    display: flex; /* Usa flexbox para alinhar título e lista */
+    flex-direction: column;
+}
+
+.score-panel h2 {
+    font-family: var(--font-title);
+    color: var(--accent-pink);
+    text-align: center;
+    margin-bottom: 0.8rem;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    flex-shrink: 0; /* Título não encolhe */
+}
+
+/* Lista de histórico de movimentos */
+#move-history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.85rem;
+    overflow-y: auto; /* Scroll interno se a lista exceder */
+    flex-grow: 1; /* Lista ocupa espaço restante */
+}
+
+#move-history-list li {
+    padding: 0.4rem 0.2rem;
+    border-bottom: 1px dashed var(--border-color); /* Linha separadora */
+    line-height: 1.4;
+    word-wrap: break-word; /* Quebra palavras longas */
+    overflow: hidden; /* Clearfix para o float do peg-count */
+}
+#move-history-list li:last-child {
+    border-bottom: none; /* Remove a linha do último item */
+}
+#move-history-list li#no-moves-yet {
+    color: var(--border-color); /* Cor diferente para a mensagem inicial */
+    font-style: italic;
+    text-align: center;
+    padding: 1rem 0;
+}
+
+/* Estilo para as coordenadas no histórico */
+#move-history-list li .move-coords {
+    color: var(--accent-cyan); /* Ciano */
+    font-weight: bold;
+}
+
+/* Estilo para a contagem de peças restantes no histórico */
+#move-history-list li .peg-count {
+    color: var(--accent-yellow); /* Amarelo */
+    font-weight: bold;
+    float: right; /* Alinha à direita */
+    margin-left: 0.5em; /* Espaço à esquerda */
+}
+
+/* Controles (Botões) */
+.controls {
+    display: flex;
+    flex-wrap: wrap; /* Permite quebrar linha */
+    justify-content: center;
+    gap: 0.8rem; /* Espaçamento entre botões */
+    margin-top: 1rem; /* Espaço acima dos botões */
+}
+
+/* Estilo base dos botões */
+.btn {
+    font-family: var(--font-title);
+    background-color: var(--accent-purple); /* Roxo */
+    color: var(--text-main); /* Branco */
+    border: none;
+    padding: 0.7rem 1.2rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+}
+
+.btn:hover {
+    background-color: var(--accent-pink); /* Rosa no hover */
+    transform: translateY(-2px); /* Efeito de levantar */
+    box-shadow: 0 4px 10px rgba(255, 121, 198, 0.4); /* Sombra rosa */
+}
+
+.btn:active {
+    transform: translateY(0); /* Volta ao normal ao clicar */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Sombra menor */
+}
+
+/* Estilo para botões desabilitados */
+.btn:disabled {
+    background-color: var(--border-color); /* Azul acinzentado */
+    color: rgba(248, 248, 242, 0.5); /* Texto esmaecido */
+    cursor: not-allowed; /* Cursor de não permitido */
+    transform: none;
+    box-shadow: none;
+}
+
+/* Mensagem de Status */
+.status-message {
+    color: var(--accent-yellow); /* Amarelo por padrão */
+    font-size: 1rem;
+    font-weight: bold;
+    min-height: 1.5em; /* Garante espaço mesmo vazia */
+    margin-top: 1rem; /* Espaço acima */
+    transition: color 0.3s ease; /* Transição suave de cor */
+}
+
+/* --- Estilos para o Novo Footer Padrão --- */
+.page-footer {
+    width: 100%; /* Ocupa toda a largura */
+    background-color: var(--bg-secondary-opaque); /* Fundo opaco */
+    color: var(--border-color); /* Cor padrão do texto (azul acinzentado) */
+    padding: 1.5rem 1rem; /* Espaçamento interno */
+    margin-top: 2rem; /* Espaço acima do footer */
+    text-align: center;
+    border-top: 1px solid var(--border-color); /* Linha superior */
+    font-size: 0.9rem;
+}
+
+.footer-links {
+    margin-bottom: 1rem; /* Espaço abaixo dos links */
+    display: flex;
+    flex-wrap: wrap; /* Permite quebrar linha em telas menores */
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem 1rem; /* Espaçamento vertical e horizontal entre itens */
+}
+
+.footer-links a {
+    color: var(--text-main); /* Branco suave para links */
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: var(--accent-cyan); /* Ciano no hover */
+}
+
+/* Estilo para os separadores | */
+.footer-links span {
+    color: var(--border-color); /* Cor do separador */
+    user-select: none; /* Não selecionável */
+    /* Esconde separadores desnecessários no início/fim de linhas quebradas (melhoria visual) */
+    display: inline-block;
+}
+/* Oculta o primeiro separador se ele for o primeiro filho visível (em caso de quebra de linha) */
+.footer-links a:first-of-type + span {
+    /* Pode precisar de ajustes mais complexos dependendo do comportamento exato da quebra */
+}
+
+/* Estilos para os spans GEEK e CODE no footer */
+.geek {
+    font-family: var(--font-title); /* Orbitron */
+    font-weight: bold;
+    color: var(--accent-green); /* Verde */
+}
+
+.code {
+    font-family: var(--font-title); /* Orbitron */
+    font-weight: bold;
+    color: var(--accent-pink); /* Rosa */
+}
+
+.copyright {
+    font-size: 0.85rem;
+    color: var(--border-color); /* Azul acinzentado */
+}
+/* --- Fim dos Estilos do Footer --- */
+
+
+/* --- Estilos para Modal de Histórico --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Fundo escurecido semi-transparente */
+    z-index: 99; /* Abaixo do modal, acima do resto */
+    display: none; /* Oculto por padrão */
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out; /* Transição suave de opacidade */
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9); /* Centralizado, começa menor */
+    background-color: var(--bg-secondary); /* Usa o fundo secundário */
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 2rem;
+    z-index: 100; /* Acima do overlay */
+    width: 90%;
+    max-width: 500px; /* Largura máxima */
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5); /* Sombra mais pronunciada */
+    display: none; /* Oculto por padrão */
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out; /* Transição suave */
+}
+
+/* Mostra o overlay e o modal quando a classe 'active' é adicionada (via JS) */
+.modal-overlay.active,
+.modal.active {
+    display: block; /* Torna visível */
+    opacity: 1; /* Opacidade total */
+}
+
+.modal.active {
+    transform: translate(-50%, -50%) scale(1); /* Anima para o tamanho normal */
+}
+
+/* Conteúdo interno do modal */
+.modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* Espaçamento entre elementos internos */
+}
+
+.modal-content h2 {
+    font-family: var(--font-title);
+    color: var(--accent-pink);
+    text-align: center;
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+}
+
+/* Botão de fechar (X) */
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 2rem;
+    line-height: 1; /* Ajusta altura da linha */
+    color: var(--border-color);
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.close-button:hover {
+    color: var(--accent-pink); /* Rosa no hover */
+}
+
+/* Parágrafo dentro do container da lista */
+#past-games-list-container p {
+    color: var(--text-secondary); /* Roxo */
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Lista de partidas salvas */
+#past-games-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 150px; /* Altura máxima para a lista */
+    overflow-y: auto; /* Scroll vertical se necessário */
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    padding: 0.5rem;
+    background-color: rgba(0,0,0,0.1); /* Fundo levemente escuro */
+}
+
+#past-games-list li {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px dashed rgba(98, 114, 164, 0.5); /* Linha separadora mais sutil */
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    color: var(--text-main); /* Branco */
+}
+#past-games-list li:last-child {
+    border-bottom: none;
+}
+
+#past-games-list li:hover {
+    background-color: rgba(98, 114, 164, 0.2); /* Fundo azulado claro no hover */
+    color: var(--accent-cyan); /* Texto ciano no hover */
+}
+
+/* Item da lista selecionado */
+#past-games-list li.selected {
+    background-color: var(--accent-purple); /* Fundo roxo */
+    color: var(--text-main); /* Texto branco */
+    font-weight: bold;
+}
+
+/* Título da seção de detalhes */
+#selected-game-details h3 {
+    color: var(--accent-yellow); /* Amarelo */
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    font-family: var(--font-primary); /* Fonte Roboto */
+}
+
+/* Área de texto para exibir a sequência */
+#selected-game-moves {
+    width: 100%;
+    font-family: 'Courier New', Courier, monospace; /* Fonte monoespaçada para sequências */
+    font-size: 0.85rem;
+    padding: 0.5rem;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-dark-start); /* Fundo bem escuro */
+    color: var(--text-main); /* Texto branco */
+    resize: vertical; /* Permite redimensionar verticalmente */
+    margin-bottom: 1rem;
+    min-height: 80px; /* Altura mínima */
+}
+
+/* Botão específico dentro do modal (Copiar) */
+.modal-btn {
+    align-self: flex-end; /* Alinha botão de cópia à direita */
+    background-color: var(--accent-green); /* Verde */
+    color: var(--bg-secondary-opaque); /* Texto escuro para contraste */
+}
+
+.modal-btn:hover {
+    background-color: #8affc1; /* Verde mais claro no hover */
+    color: var(--bg-secondary-opaque);
+}
+/* --- Fim dos Estilos do Modal --- */
+
+
+/* --- Estilos para Destaque de Dicas (Modo Com Dicas) --- */
+
+/* Destaque na PEÇA de origem da dica (::before controla a peça visual) */
+.cell.hint-source::before {
+    box-shadow: 0 0 15px 5px var(--accent-yellow), /* Brilho amarelo externo forte */
+                inset 0 0 5px var(--accent-yellow); /* Brilho amarelo interno */
+    border: 2px solid var(--accent-yellow); /* Borda amarela */
+    background-color: var(--accent-yellow); /* Fundo amarelo temporário */
+    transform: scale(1.05); /* Leve aumento */
+}
+
+/* Destaque na CÉLULA VAZIA de destino da dica */
+.cell.empty.hint-target {
+    background-color: rgba(241, 250, 140, 0.4); /* Fundo amarelo bem transparente */
+    border: 2px solid var(--accent-yellow); /* Borda amarela sólida */
+    box-shadow: 0 0 12px var(--accent-yellow); /* Brilho amarelo */
+}
+
+
+/* --- Animações --- */
+/* Animação de Fade-in para o container do jogo */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Animação de pulso para erro (vermelho) */
+@keyframes pulse-red-error {
+    0% { box-shadow: 0 0 0 0 rgba(255, 85, 85, 0.7); }
+    70% { box-shadow: 0 0 10px 15px rgba(255, 85, 85, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 85, 85, 0); }
+}
+/* Aplica na CÉLULA que foi clicada errada */
+.cell.error-pulse {
+    animation: pulse-red-error 0.7s ease-out;
+}
+
+/* Animação de pulso para sucesso (verde) */
+@keyframes pulse-green-success {
+    0% { box-shadow: 0 0 0 0 rgba(80, 250, 123, 0.7); }
+    70% { box-shadow: 0 0 10px 15px rgba(80, 250, 123, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(80, 250, 123, 0); }
+}
+/* Aplica no ::before da PEÇA que acabou de chegar no destino */
+.cell.peg.success-pulse::before {
+    animation: pulse-green-success 0.7s ease-out;
+}
+
+/* Animação de pulso para o coração (usada no footer antigo, pode ser removida se não for usada) */
+@keyframes pulse-heart {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+
+/* --- Responsividade --- */
+@media (max-width: 768px) {
+    html { font-size: 14px; } /* Reduz tamanho base da fonte */
+    .game-container { padding: 1rem; width: 95%; margin-top: 0.5rem; }
+    .game-title { font-size: 2rem; }
+    .subtitle { font-size: 1.1rem; }
+
+    /* Empilha tabuleiro e placar em telas menores */
+    .game-area-wrapper {
+        flex-direction: column; /* Um abaixo do outro */
+        align-items: center; /* Centraliza na coluna */
+        gap: 1rem;
+    }
+    .score-panel {
+        width: 90%; /* Ocupa mais largura */
+        max-width: 450px; /* Limita largura máxima */
+        max-height: 180px; /* Reduz altura máxima */
+        min-height: 120px; /* Altura mínima menor */
+        margin-top: 1rem;
+    }
+     .controls { margin-top: 1rem; }
+     .status-message { margin-top: 0.8rem; font-size: 0.95rem; }
+}
+
+@media (max-width: 480px) {
+    html { font-size: 13px; } /* Reduz ainda mais a fonte base */
+    body { padding: 0.5rem; }
+    .game-container { padding: 0.8rem; gap: 1rem; width: 100%; max-width: 100%; }
+    .game-title { font-size: 1.8rem; }
+    .subtitle { font-size: 1rem; }
+
+    .board-container { width: clamp(240px, 90vw, 320px); } /* Ajusta tamanho do tabuleiro */
+    .board { gap: 3px; padding: 3px; } /* Reduz espaçamento no tabuleiro */
+    .cell.peg::before { width: 70%; height: 70%; } /* Peça um pouco menor */
+    .coordinate-label { font-size: 0.55rem; } /* Label de coordenada menor */
+
+    /* Botões empilhados verticalmente */
+    .controls {
+        gap: 0.6rem;
+        flex-direction: column; /* Um botão por linha */
+        align-items: stretch; /* Botões ocupam largura total */
+    }
+    .btn { padding: 0.8rem 1rem; font-size: 0.85rem;}
+
+    .status-message { font-size: 0.9rem; }
+    .score-panel { max-height: 150px; width: 95%; }
+    #move-history-list li .peg-count { font-size: 0.8rem;}
+
+    /* Ajustes no Footer para telas pequenas */
+    .page-footer {
+        padding: 1rem 0.5rem; /* Menos padding */
+        font-size: 0.8rem;
+        margin-top: 1.5rem;
+    }
+    .footer-links {
+        gap: 0.3rem 0.8rem; /* Menor espaçamento */
+        margin-bottom: 0.8rem;
+    }
+    .copyright {
+        font-size: 0.75rem;
+    }
+
+    /* Ajustes no Modal para telas pequenas */
+    .modal {
+        padding: 1.5rem 1rem;
+        width: 95%;
+    }
+    .modal-content h2 {
+        font-size: 1.3rem;
+    }
+    #past-games-list {
+        max-height: 120px; /* Lista do histórico um pouco menor */
+    }
+    #selected-game-moves {
+        font-size: 0.8rem; /* Texto da sequência menor */
+        min-height: 60px;
+    }
+    .modal-btn {
+        width: 100%; /* Botão de cópia ocupa largura total */
+        text-align: center;
+        align-self: center; /* Centraliza */
+    }
+}

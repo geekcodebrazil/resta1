@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resta 1 - Geek Code Edition</title>
+    <!-- Importação das Fontes do Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Link para o arquivo CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Contêiner principal do jogo -->
+    <div class="game-container">
+       <header>
+    <h1 class="game-title">
+        <span class="title-geek">GEEK</span><span class="title-code"> CODE</span>
+    </h1>
+    <p class="subtitle">Resta 1</p>
+</header>
+
+        <!-- Wrapper para o tabuleiro e o painel de histórico -->
+        <div class="game-area-wrapper">
+            <!-- Container do tabuleiro -->
+            <div class="board-container">
+                <div class="board" id="game-board">
+                    <!-- Células do tabuleiro serão geradas pelo JavaScript -->
+                </div>
+            </div>
+
+            <!-- Painel de Placar / Histórico da partida atual -->
+            <div class="score-panel">
+                <h2>Histórico da Partida</h2>
+                <ul id="move-history-list">
+                    <!-- Histórico de movimentos será preenchido pelo JavaScript -->
+                    <li id="no-moves-yet">Nenhum movimento ainda.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Controles (Botões de Ação) -->
+        <div class="controls">
+            <button id="reset-button" class="btn" disabled>Reiniciar</button>
+            <button id="start-no-hints-button" class="btn">Jogar Sem Dicas</button>
+            <button id="start-with-hints-button" class="btn">Jogar Com Dicas</button>
+            <button id="view-history-button" class="btn">Últimas Partidas</button>
+        </div>
+
+        <!-- Mensagem de Status para o jogador -->
+        <div class="status-message" id="status-message">
+            Escolha um modo de jogo para começar.
+        </div>
+    </div> <!-- Fim do .game-container -->
+
+    <!-- Overlay para o fundo do modal -->
+    <div id="modal-overlay" class="modal-overlay"></div>
+
+    <!-- Modal para exibir o Histórico das Últimas Partidas -->
+    <div id="past-games-modal" class="modal">
+        <div class="modal-content">
+            <!-- Botão para fechar o modal -->
+            <span class="close-button" id="close-modal-button" title="Fechar">&times;</span>
+            <h2>Últimas 5 Partidas</h2>
+
+            <!-- Container da lista de partidas salvas -->
+            <div id="past-games-list-container">
+                <p>Selecione uma partida para ver os movimentos:</p>
+                <ul id="past-games-list">
+                    <!-- Lista de partidas será preenchida pelo JavaScript -->
+                    <li>Nenhuma partida salva ainda.</li>
+                </ul>
+            </div>
+
+            <!-- Container para os detalhes da partida selecionada (inicialmente oculto) -->
+            <div id="selected-game-details" style="display: none;">
+                <h3>Movimentos da Partida Selecionada:</h3>
+                <!-- Área de texto para exibir a sequência de movimentos (somente leitura) -->
+                <textarea id="selected-game-moves" rows="6" readonly></textarea>
+                <!-- Botão para copiar a sequência exibida -->
+                <button id="copy-sequence-button" class="btn modal-btn" disabled>Copiar Sequência</button>
+            </div>
+        </div>
+    </div> <!-- Fim do #past-games-modal -->
+
+    <!-- Rodapé fixo -->
+    <footer class="page-footer">
+    <div class="footer-links">
+        <!-- Links internos (podem apontar para seções reais se existirem) -->
+        <a href="#privacy" rel="noopener noreferrer">Privacidade</a>
+        <span>|</span>
+        <a href="#services" rel="noopener noreferrer">Serviços</a>
+        <span>|</span>
+        <a href="#about" rel="noopener noreferrer">Sobre</a>
+        <span>|</span>
+        <a href="#terms" rel="noopener noreferrer">Termos</a>
+        <span>|</span>
+        <!-- Link para recarregar a página inicial do jogo -->
+        <a href="index.html" rel="noopener noreferrer">Início</a>
+        <span>|</span>
+        <!-- Link externo para o GitHub -->
+        <a href="https://github.com/seu-usuario-github" target="_blank" rel="noopener noreferrer">Desenvolvido por <span class="geek">GΞΞK</span><span class="code"> CΦDΞ</span></a>
+    </div>
+    <p class="copyright">© <span id="current-year"></span> <span class="geek">GΞΞK</span><span class="code"> CΦDΞ</span>. Todos os direitos reservados.</p>
+</footer>
+
+    <!-- Link para o arquivo JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
